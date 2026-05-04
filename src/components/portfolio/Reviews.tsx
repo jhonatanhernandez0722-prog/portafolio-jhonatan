@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Heart, MessageSquare } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
@@ -11,22 +11,71 @@ interface Review {
   created_at: string;
 }
 
-function getLikedReviews(): Set<string> {
+function getLiked(): string[] {
   try {
     const raw = localStorage.getItem("liked_reviews");
-    return raw ? new Set(JSON.parse(raw)) : new Set();
-  } catch { return new Set(); }
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
 }
 
-function saveLikedReviews(set: Set<string>) {
-  try { localStorage.setItem("liked_reviews", JSON.stringify([...set])); } catch { /* noop */ }
+function saveLiked(arr: string[]) {
+  try { localStorage.setItem("liked_reviews", JSON.stringify(arr)); } catch { /* noop */ }
+}
+
+// Formulario separado para evitar re-renders de la lista al escribir
+function ReviewForm({ onAdd }: { onAdd: (name: string, message: string) => Promise<void> }) {
+  const [author, setAuthor] = useState("");
+  const [text, setText] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!author.trim() || !text.trim() || loading) return;
+    setLoading(true);
+    await onAdd(author.trim(), text.trim());
+    setAuthor("");
+    setText("");
+    setLoading(false);
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 3000);
+  };
+
+  return (
+    <div className="max-w-lg mb-14 glow-card p-8">
+      <h3 className="text-lg font-semibold mb-5 flex items-center gap-2">
+        <MessageSquare className="h-4 w-4 text-primary" />
+        Añadir reseña
+      </h3>
+      <div className="space-y-4">
+        <input
+          type="text"
+          placeholder="Tu nombre"
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+          className="w-full rounded-xl border border-border bg-secondary px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
+        />
+        <textarea
+          placeholder="Tu reseña..."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          rows={4}
+          className="w-full rounded-xl border border-border bg-secondary px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors resize-none"
+        />
+        <button
+          onClick={handleSubmit}
+          disabled={!author.trim() || !text.trim() || loading}
+          className="btn-primary w-full disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {submitted ? "¡Reseña publicada! ✓" : loading ? "Publicando..." : "Publicar reseña"}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export function Reviews() {
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [likedSet, setLikedSet] = useState<Set<string>>(getLikedReviews);
-  const [newReview, setNewReview] = useState({ author: "", text: "" });
-  const [submitted, setSubmitted] = useState(false);
+  const [likedIds, setLikedIds] = useState<string[]>(getLiked);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,31 +89,27 @@ export function Reviews() {
       });
   }, []);
 
-  const handleLike = async (id: string) => {
-    if (likedSet.has(id)) return;
+  const handleLike = useCallback(async (id: string) => {
+    if (likedIds.includes(id)) return;
     const { data } = await supabase.rpc("increment_review_likes", { review_id: id });
     if (data !== null) {
       setReviews((prev) => prev.map((r) => r.id === id ? { ...r, likes: data } : r));
     }
-    const next = new Set(likedSet).add(id);
-    setLikedSet(next);
-    saveLikedReviews(next);
-  };
+    const next = [...likedIds, id];
+    setLikedIds(next);
+    saveLiked(next);
+  }, [likedIds]);
 
-  const handleAddReview = async () => {
-    if (!newReview.author.trim() || !newReview.text.trim()) return;
+  const handleAdd = useCallback(async (name: string, message: string) => {
     const { data, error } = await supabase
       .from("reviews")
-      .insert({ name: newReview.author.trim(), message: newReview.text.trim(), rating: 5, likes: 0 })
+      .insert({ name, message, rating: 5, likes: 0 })
       .select()
       .single();
     if (!error && data) {
       setReviews((prev) => [data as Review, ...prev]);
     }
-    setNewReview({ author: "", text: "" });
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
-  };
+  }, []);
 
   return (
     <section id="reseñas" className="section-padding">
@@ -79,36 +124,7 @@ export function Reviews() {
           </p>
         </div>
 
-        {/* Form */}
-        <div className="max-w-lg mb-14 glow-card p-8">
-          <h3 className="text-lg font-semibold mb-5 flex items-center gap-2">
-            <MessageSquare className="h-4 w-4 text-primary" />
-            Añadir reseña
-          </h3>
-          <div className="space-y-4">
-            <input
-              type="text"
-              placeholder="Tu nombre"
-              value={newReview.author}
-              onChange={(e) => setNewReview({ ...newReview, author: e.target.value })}
-              className="w-full rounded-xl border border-border bg-secondary px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
-            />
-            <textarea
-              placeholder="Tu reseña..."
-              value={newReview.text}
-              onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
-              rows={4}
-              className="w-full rounded-xl border border-border bg-secondary px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors resize-none"
-            />
-            <button
-              onClick={handleAddReview}
-              disabled={!newReview.author.trim() || !newReview.text.trim()}
-              className="btn-primary w-full disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {submitted ? "¡Reseña publicada! ✓" : "Publicar reseña"}
-            </button>
-          </div>
-        </div>
+        <ReviewForm onAdd={handleAdd} />
 
         {/* Reviews grid */}
         {loading ? (
@@ -130,14 +146,14 @@ export function Reviews() {
                 </div>
                 <button
                   onClick={() => handleLike(r.id)}
-                  disabled={likedSet.has(r.id)}
+                  disabled={likedIds.includes(r.id)}
                   className={`mt-auto self-start flex items-center gap-2 text-sm transition-colors px-3 py-1.5 rounded-lg border ${
-                    likedSet.has(r.id)
+                    likedIds.includes(r.id)
                       ? "text-red-400 border-red-400/30 bg-red-400/5 cursor-default"
                       : "text-muted-foreground border-border hover:text-red-400 hover:border-red-400/30"
                   }`}
                 >
-                  <Heart className={`h-4 w-4 ${likedSet.has(r.id) ? "fill-red-400" : ""}`} />
+                  <Heart className={`h-4 w-4 ${likedIds.includes(r.id) ? "fill-red-400" : ""}`} />
                   <span>{r.likes}</span>
                 </button>
               </article>
