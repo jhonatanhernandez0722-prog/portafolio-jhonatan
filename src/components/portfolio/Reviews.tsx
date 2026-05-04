@@ -42,11 +42,10 @@ export function Reviews() {
 
   const handleLike = async (id: string) => {
     if (likedSet.has(id)) return;
-    const review = reviews.find((r) => r.id === id);
-    if (!review) return;
-    const newLikes = review.likes + 1;
-    await supabase.from("reviews").update({ likes: newLikes }).eq("id", id);
-    setReviews((prev) => prev.map((r) => r.id === id ? { ...r, likes: newLikes } : r));
+    const { data } = await supabase.rpc("increment_review_likes", { review_id: id });
+    if (data !== null) {
+      setReviews((prev) => prev.map((r) => r.id === id ? { ...r, likes: data } : r));
+    }
     const next = new Set(likedSet).add(id);
     setLikedSet(next);
     saveLikedReviews(next);

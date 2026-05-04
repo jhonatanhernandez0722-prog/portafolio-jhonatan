@@ -48,11 +48,8 @@ export function SideNavbar() {
 
   const handleLike = async () => {
     if (liked) return;
-    const { data } = await supabase.from("likes").select("count, id").single();
-    if (!data) return;
-    const newCount = data.count + 1;
-    await supabase.from("likes").update({ count: newCount }).eq("id", data.id);
-    setLikeCount(newCount);
+    const { data } = await supabase.rpc("increment_portfolio_likes");
+    if (data !== null) setLikeCount(data);
     setLiked(true);
     lsSet(STORAGE_KEY, "1");
   };
