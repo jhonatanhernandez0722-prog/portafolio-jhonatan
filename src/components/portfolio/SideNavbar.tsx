@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import logo from "@/assets/Images/Logo.png";
+import { supabase } from "@/lib/supabase";
 
-/** Safe localStorage wrapper — avoids Access Denied in restricted iframes */
+/** Safe localStorage wrapper */
 function lsGet(key: string): string | null {
   try { return localStorage.getItem(key); } catch { return null; }
 }
@@ -22,7 +23,6 @@ import {
 } from "lucide-react";
 
 const STORAGE_KEY = "portfolio_liked";
-const STORAGE_COUNT = "portfolio_likes_count";
 
 const links = [
   { href: "#top", label: "Inicio", Icon: Home },
@@ -38,18 +38,23 @@ const links = [
 export function SideNavbar() {
   const [active, setActive] = useState("top");
   const [liked, setLiked] = useState(() => lsGet(STORAGE_KEY) === "1");
-  const [likeCount, setLikeCount] = useState(() => {
-    const stored = lsGet(STORAGE_COUNT);
-    return stored ? parseInt(stored, 10) : 42;
-  });
+  const [likeCount, setLikeCount] = useState(0);
 
-  const handleLike = () => {
+  useEffect(() => {
+    supabase.from("likes").select("count").single().then(({ data }) => {
+      if (data) setLikeCount(data.count);
+    });
+  }, []);
+
+  const handleLike = async () => {
     if (liked) return;
-    const next = likeCount + 1;
-    setLikeCount(next);
+    const { data } = await supabase.from("likes").select("count, id").single();
+    if (!data) return;
+    const newCount = data.count + 1;
+    await supabase.from("likes").update({ count: newCount }).eq("id", data.id);
+    setLikeCount(newCount);
     setLiked(true);
     lsSet(STORAGE_KEY, "1");
-    lsSet(STORAGE_COUNT, String(next));
   };
 
   useEffect(() => {

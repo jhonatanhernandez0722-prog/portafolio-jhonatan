@@ -1,36 +1,67 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Heart, MessageSquare } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface Review {
-  id: number;
-  author: string;
-  text: string;
+  id: string;
+  name: string;
+  message: string;
+  rating: number;
   likes: number;
-  likedByMe: boolean;
+  created_at: string;
+}
+
+function getLikedReviews(): Set<string> {
+  try {
+    const raw = localStorage.getItem("liked_reviews");
+    return raw ? new Set(JSON.parse(raw)) : new Set();
+  } catch { return new Set(); }
+}
+
+function saveLikedReviews(set: Set<string>) {
+  try { localStorage.setItem("liked_reviews", JSON.stringify([...set])); } catch { /* noop */ }
 }
 
 export function Reviews() {
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [likedSet, setLikedSet] = useState<Set<string>>(getLikedReviews);
   const [newReview, setNewReview] = useState({ author: "", text: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const handleLike = (id: number) => {
-    setReviews((prev) =>
-      prev.map((r) =>
-        r.id === id && !r.likedByMe
-          ? { ...r, likes: r.likes + 1, likedByMe: true }
-          : r
-      )
-    );
+  useEffect(() => {
+    supabase
+      .from("reviews")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (data) setReviews(data as Review[]);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleLike = async (id: string) => {
+    if (likedSet.has(id)) return;
+    const review = reviews.find((r) => r.id === id);
+    if (!review) return;
+    const newLikes = review.likes + 1;
+    await supabase.from("reviews").update({ likes: newLikes }).eq("id", id);
+    setReviews((prev) => prev.map((r) => r.id === id ? { ...r, likes: newLikes } : r));
+    const next = new Set(likedSet).add(id);
+    setLikedSet(next);
+    saveLikedReviews(next);
   };
 
-  const handleAddReview = () => {
+  const handleAddReview = async () => {
     if (!newReview.author.trim() || !newReview.text.trim()) return;
-    const newId = Date.now();
-    setReviews((prev) => [
-      ...prev,
-      { id: newId, ...newReview, likes: 0, likedByMe: false },
-    ]);
+    const { data, error } = await supabase
+      .from("reviews")
+      .insert({ name: newReview.author.trim(), message: newReview.text.trim(), rating: 5, likes: 0 })
+      .select()
+      .single();
+    if (!error && data) {
+      setReviews((prev) => [data as Review, ...prev]);
+    }
     setNewReview({ author: "", text: "" });
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 3000);
@@ -81,7 +112,11 @@ export function Reviews() {
         </div>
 
         {/* Reviews grid */}
-        {reviews.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-16 text-muted-foreground">
+            <p className="text-lg">Cargando reseñas...</p>
+          </div>
+        ) : reviews.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
             <MessageSquare className="h-10 w-10 mx-auto mb-4 opacity-30" />
             <p className="text-lg">Aún no hay reseñas. ¡Sé el primero!</p>
@@ -91,19 +126,19 @@ export function Reviews() {
             {reviews.map((r) => (
               <article key={r.id} className="glow-card p-6 flex flex-col gap-4">
                 <div>
-                  <p className="font-semibold text-foreground">{r.author}</p>
-                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{r.text}</p>
+                  <p className="font-semibold text-foreground">{r.name}</p>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{r.message}</p>
                 </div>
                 <button
                   onClick={() => handleLike(r.id)}
-                  disabled={r.likedByMe}
+                  disabled={likedSet.has(r.id)}
                   className={`mt-auto self-start flex items-center gap-2 text-sm transition-colors px-3 py-1.5 rounded-lg border ${
-                    r.likedByMe
+                    likedSet.has(r.id)
                       ? "text-red-400 border-red-400/30 bg-red-400/5 cursor-default"
                       : "text-muted-foreground border-border hover:text-red-400 hover:border-red-400/30"
                   }`}
                 >
-                  <Heart className={`h-4 w-4 ${r.likedByMe ? "fill-red-400" : ""}`} />
+                  <Heart className={`h-4 w-4 ${likedSet.has(r.id) ? "fill-red-400" : ""}`} />
                   <span>{r.likes}</span>
                 </button>
               </article>
