@@ -41,8 +41,8 @@ export function SideNavbar() {
   const [likeCount, setLikeCount] = useState(0);
 
   useEffect(() => {
-    supabase.from("likes").select("count").single().then(({ data }) => {
-      if (data) setLikeCount(data.count);
+    supabase.from("likes").select("total").single().then(({ data, error }) => {
+      if (data) setLikeCount(data.total);
     });
   }, []);
 
