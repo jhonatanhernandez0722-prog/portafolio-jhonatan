@@ -1,5 +1,5 @@
 import portada from "@/assets/Images/Portada.jpeg";
-import banner from "@/assets/Images/Banner.png";
+import banner from "@/assets/Images/banner.png";
 import { useState, useRef } from "react";
 
 /** Each letter: dim gray base → bright silver chrome on hover, very noticeable */
