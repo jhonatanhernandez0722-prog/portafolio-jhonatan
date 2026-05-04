@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import logo from "@/assets/Images/Logo.png";
-import { supabase } from "@/lib/supabase";
 
 /** Safe localStorage wrapper */
 function lsGet(key: string): string | null {
@@ -41,15 +40,17 @@ export function SideNavbar() {
   const [likeCount, setLikeCount] = useState(0);
 
   useEffect(() => {
-    supabase.from("likes").select("total").single().then(({ data, error }) => {
-      if (data) setLikeCount(data.total);
-    });
+    fetch("/api/likes")
+      .then((r) => r.json())
+      .then((data) => { if (data?.total != null) setLikeCount(data.total); })
+      .catch(() => {});
   }, []);
 
   const handleLike = async () => {
     if (liked) return;
-    const { data } = await supabase.rpc("increment_portfolio_likes");
-    if (data !== null) setLikeCount(data);
+    const res = await fetch("/api/likes", { method: "POST" });
+    const data = await res.json();
+    if (data?.total != null) setLikeCount(data.total);
     setLiked(true);
     lsSet(STORAGE_KEY, "1");
   };

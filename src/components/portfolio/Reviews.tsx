@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { Heart, MessageSquare } from "lucide-react";
-import { supabase } from "@/lib/supabase";
 
 interface Review {
   id: string;
@@ -79,34 +78,37 @@ export function Reviews() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase
-      .from("reviews")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        if (data) setReviews(data as Review[]);
+    fetch("/api/reviews")
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) setReviews(data as Review[]);
         setLoading(false);
-      });
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   const handleLike = useCallback(async (id: string) => {
     if (likedIds.includes(id)) return;
-    const { data } = await supabase.rpc("increment_review_likes", { review_id: id });
-    if (data !== null) {
-      setReviews((prev) => prev.map((r) => r.id === id ? { ...r, likes: data } : r));
-    }
+    const res = await fetch("/api/like-review", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    const data = await res.json();
+    setReviews((prev) => prev.map((r) => r.id === id ? { ...r, likes: data.likes } : r));
     const next = [...likedIds, id];
     setLikedIds(next);
     saveLiked(next);
   }, [likedIds]);
 
   const handleAdd = useCallback(async (name: string, message: string) => {
-    const { data, error } = await supabase
-      .from("reviews")
-      .insert({ name, message, rating: 5, likes: 0 })
-      .select()
-      .single();
-    if (!error && data) {
+    const res = await fetch("/api/reviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, message }),
+    });
+    if (res.ok) {
+      const data = await res.json();
       setReviews((prev) => [data as Review, ...prev]);
     }
   }, []);
