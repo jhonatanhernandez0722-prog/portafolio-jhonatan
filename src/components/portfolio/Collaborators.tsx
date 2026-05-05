@@ -43,7 +43,10 @@ export function Collaborators() {
           {partners.map((p) => (
             <article key={p.name} className="glow-card p-8 text-center">
               <div className="relative mx-auto w-32 h-32">
-                <div className="absolute -inset-1 rounded-full bg-[var(--gradient-primary)] opacity-60 blur-md" aria-hidden />
+                <div
+                  className="absolute -inset-1 rounded-full bg-[var(--gradient-primary)] opacity-60 blur-md"
+                  aria-hidden
+                />
                 <img
                   src={p.img}
                   alt={`Foto de ${p.name}`}

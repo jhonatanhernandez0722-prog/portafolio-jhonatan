@@ -6,7 +6,6 @@ import { Stack } from "@/components/portfolio/Stack";
 import { Education } from "@/components/portfolio/Education";
 import { Projects } from "@/components/portfolio/Projects";
 import { Collaborators } from "@/components/portfolio/Collaborators";
-import { Reviews } from "@/components/portfolio/Reviews";
 import { Contact } from "@/components/portfolio/Contact";
 
 export const Route = createFileRoute("/")({
@@ -20,7 +19,10 @@ export const Route = createFileRoute("/")({
           "Portafolio de Jhonatan Hernández, desarrollador fullstack especializado en React, Next.js, Java, Python e IA. Proyectos, stack y formación.",
       },
       { property: "og:title", content: "Jhonatan Hernández — Fullstack Developer" },
-      { property: "og:description", content: "Aplicaciones web modernas, eficientes y escalables." },
+      {
+        property: "og:description",
+        content: "Aplicaciones web modernas, eficientes y escalables.",
+      },
     ],
   }),
 });
@@ -36,7 +38,6 @@ function Index() {
         <Education />
         <Projects />
         <Collaborators />
-        <Reviews />
         <Contact />
       </main>
     </div>

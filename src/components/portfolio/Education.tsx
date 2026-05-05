@@ -12,7 +12,9 @@ export function Education() {
     <section id="formacion" className="section-padding">
       <div className="container-narrow">
         <div className="max-w-2xl">
-          <span className="text-primary text-sm uppercase tracking-[0.3em] font-semibold">Formación</span>
+          <span className="text-primary text-sm uppercase tracking-[0.3em] font-semibold">
+            Formación
+          </span>
           <h2 className="mt-4 text-4xl md:text-5xl font-bold">
             Aprendizaje <span className="text-gradient">continuo</span>
           </h2>

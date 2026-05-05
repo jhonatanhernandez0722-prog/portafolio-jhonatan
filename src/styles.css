@@ -52,7 +52,7 @@
 
   --primary: oklch(0.77 0.007 250);
   --primary-foreground: oklch(0.07 0 0);
-  --primary-glow: oklch(0.90 0.004 250);
+  --primary-glow: oklch(0.9 0.004 250);
 
   --secondary: oklch(0.16 0.004 250);
   --secondary-foreground: oklch(0.96 0.005 250);
@@ -70,7 +70,7 @@
   --input: oklch(1 0 0 / 11%);
   --ring: oklch(0.77 0.007 250);
 
-  --gradient-primary: linear-gradient(135deg, oklch(0.60 0.007 250), oklch(0.90 0.004 250));
+  --gradient-primary: linear-gradient(135deg, oklch(0.6 0.007 250), oklch(0.9 0.004 250));
   --gradient-hero: radial-gradient(ellipse at top, oklch(0.77 0.007 250 / 0.14), transparent 60%);
   --gradient-surface: linear-gradient(180deg, oklch(0.13 0.004 250), oklch(0.09 0.004 250));
 
@@ -95,12 +95,15 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     background-image:
-      radial-gradient(ellipse 80% 50% at 50% -10%, oklch(0.77 0.007 250 / 0.10), transparent),
+      radial-gradient(ellipse 80% 50% at 50% -10%, oklch(0.77 0.007 250 / 0.1), transparent),
       radial-gradient(ellipse 60% 50% at 80% 60%, oklch(0.77 0.007 250 / 0.05), transparent);
     background-attachment: fixed;
   }
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
   }
@@ -123,7 +126,7 @@
   }
 
   .glow-card:hover {
-    border-color: oklch(0.77 0.007 250 / 0.40);
+    border-color: oklch(0.77 0.007 250 / 0.4);
     transform: translateY(-4px);
     box-shadow: var(--shadow-elegant);
   }
@@ -144,7 +147,7 @@
 
   .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0 80px -10px oklch(0.90 0.004 250 / 0.55);
+    box-shadow: 0 0 80px -10px oklch(0.9 0.004 250 / 0.55);
   }
 
   .btn-outline {
@@ -182,7 +185,7 @@
     height: 20rem;
     border-radius: 9999px;
     filter: blur(110px);
-    opacity: 0.30;
+    opacity: 0.3;
     background: radial-gradient(circle, rgba(190, 190, 200, 0.28), transparent 55%);
   }
 
@@ -198,9 +201,11 @@
     position: absolute;
     inset: 0;
     background-image:
-      radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-      radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
-    background-size: 70px 70px, 115px 115px;
+      radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+      radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size:
+      70px 70px,
+      115px 115px;
     opacity: 0.28;
     pointer-events: none;
   }
@@ -210,7 +215,8 @@
   }
 
   @keyframes float {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0px) scale(1);
     }
     50% {
@@ -219,8 +225,13 @@
   }
 
   @keyframes silver-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.45; }
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
   }
 
   .sidebar-dot-pulse {

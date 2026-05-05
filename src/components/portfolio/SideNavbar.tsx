@@ -1,13 +1,5 @@
 import { useState, useEffect } from "react";
 import logo from "@/assets/Images/Logo.png";
-
-/** Safe localStorage wrapper */
-function lsGet(key: string): string | null {
-  try { return localStorage.getItem(key); } catch { return null; }
-}
-function lsSet(key: string, value: string): void {
-  try { localStorage.setItem(key, value); } catch { /* noop */ }
-}
 import {
   Home,
   User,
@@ -15,13 +7,10 @@ import {
   GraduationCap,
   FolderOpen,
   Users,
-  Star,
+  MessageSquare,
   Mail,
   Download,
-  Heart,
 } from "lucide-react";
-
-const STORAGE_KEY = "portfolio_liked";
 
 const links = [
   { href: "#top", label: "Inicio", Icon: Home },
@@ -30,30 +19,12 @@ const links = [
   { href: "#formacion", label: "Formación", Icon: GraduationCap },
   { href: "#proyectos", label: "Proyectos", Icon: FolderOpen },
   { href: "#colaboraciones", label: "Colaboraciones", Icon: Users },
-  { href: "#reseñas", label: "Reseñas", Icon: Star },
+  { href: "#comentarios", label: "Comentarios", Icon: MessageSquare },
   { href: "#contacto", label: "Contacto", Icon: Mail },
 ];
 
 export function SideNavbar() {
   const [active, setActive] = useState("top");
-  const [liked, setLiked] = useState(() => lsGet(STORAGE_KEY) === "1");
-  const [likeCount, setLikeCount] = useState(0);
-
-  useEffect(() => {
-    fetch("/api/likes")
-      .then((r) => r.json())
-      .then((data) => { if (data?.total != null) setLikeCount(data.total); })
-      .catch(() => {});
-  }, []);
-
-  const handleLike = async () => {
-    if (liked) return;
-    const res = await fetch("/api/likes", { method: "POST" });
-    const data = await res.json();
-    if (data?.total != null) setLikeCount(data.total);
-    setLiked(true);
-    lsSet(STORAGE_KEY, "1");
-  };
 
   useEffect(() => {
     const sections = links
@@ -67,7 +38,7 @@ export function SideNavbar() {
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
         if (visible.length > 0) setActive(visible[0].target.id);
       },
-      { threshold: 0.25, rootMargin: "-60px 0px -35% 0px" }
+      { threshold: 0.25, rootMargin: "-60px 0px -35% 0px" },
     );
 
     sections.forEach((s) => observer.observe(s));
@@ -77,7 +48,10 @@ export function SideNavbar() {
   return (
     <aside
       className="fixed right-0 top-0 h-screen z-50 flex flex-col items-center py-6 w-16 border-l border-white/8 backdrop-blur-2xl"
-      style={{ backgroundColor: "oklch(0.10 0.006 250 / 0.97)", boxShadow: "-4px 0 40px -8px oklch(0.77 0.007 250 / 0.12)" }}
+      style={{
+        backgroundColor: "oklch(0.10 0.006 250 / 0.97)",
+        boxShadow: "-4px 0 40px -8px oklch(0.77 0.007 250 / 0.12)",
+      }}
     >
       {/* Logo */}
       <a
@@ -119,24 +93,6 @@ export function SideNavbar() {
         })}
       </nav>
 
-      {/* Like counter */}
-      <button
-        onClick={handleLike}
-        disabled={liked}
-        aria-label={liked ? "Ya le diste like" : "Dar like al portafolio"}
-        className={`group relative flex flex-col items-center justify-center gap-0.5 h-12 w-10 rounded-xl border transition-all duration-300 mb-2 ${
-          liked
-            ? "text-red-400 border-red-400/30 bg-red-400/8 cursor-default"
-            : "text-muted-foreground border-border hover:text-red-400 hover:border-red-400/30 hover:bg-red-400/6"
-        }`}
-      >
-        <Heart className={`h-4 w-4 shrink-0 transition-transform ${liked ? "fill-red-400 scale-110" : "group-hover:scale-110"}`} />
-        <span className="text-[10px] font-semibold leading-none">{likeCount}</span>
-        <span className="pointer-events-none absolute right-[calc(100%+0.625rem)] whitespace-nowrap rounded-xl border border-primary/20 bg-card px-3 py-1.5 text-xs font-medium text-foreground shadow-2xl opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
-          {liked ? "¡Gracias!" : "Me gusta"}
-        </span>
-      </button>
-
       {/* Download CV */}
       <a
         href="/cv.pdf"
@@ -152,4 +108,3 @@ export function SideNavbar() {
     </aside>
   );
 }
-

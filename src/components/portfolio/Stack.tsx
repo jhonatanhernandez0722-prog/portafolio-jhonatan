@@ -19,17 +19,17 @@ type TechIconEntry = {
 };
 
 const techIcons: Record<string, TechIconEntry> = {
-  HTML:                  { icon: SiHtml5,       color: "#e34f26" },
-  CSS:                   { icon: SiCss,         color: "#1572b6" },
-  JavaScript:            { icon: SiJavascript,  color: "#f7df1e" },
-  React:                 { icon: SiReact,       color: "#61dafb" },
-  "Next.js":             { icon: SiNextdotjs,   color: "#ffffff" },
-  Java:                  { icon: FaJava,        color: "#f89820" },
-  Python:                { icon: SiPython,      color: "#3776ab" },
-  "Git & GitHub":        { icon: SiGit,         color: "#f05032" },
-  "APIs REST":           { icon: SiGithub,      color: "#c0c8d8" },
-  "Inteligencia Artificial": { icon: SiOpenai,  color: "#10a37f" },
-  Automatización:        { icon: Settings2,     color: "#a0aec0" },
+  HTML: { icon: SiHtml5, color: "#e34f26" },
+  CSS: { icon: SiCss, color: "#1572b6" },
+  JavaScript: { icon: SiJavascript, color: "#f7df1e" },
+  React: { icon: SiReact, color: "#61dafb" },
+  "Next.js": { icon: SiNextdotjs, color: "#ffffff" },
+  Java: { icon: FaJava, color: "#f89820" },
+  Python: { icon: SiPython, color: "#3776ab" },
+  "Git & GitHub": { icon: SiGit, color: "#f05032" },
+  "APIs REST": { icon: SiGithub, color: "#c0c8d8" },
+  "Inteligencia Artificial": { icon: SiOpenai, color: "#10a37f" },
+  Automatización: { icon: Settings2, color: "#a0aec0" },
 };
 
 const groups = [
@@ -60,7 +60,9 @@ export function Stack() {
     <section id="stack" className="section-padding">
       <div className="container-narrow">
         <div className="max-w-2xl">
-          <span className="text-primary text-sm uppercase tracking-[0.3em] font-semibold">Stack</span>
+          <span className="text-primary text-sm uppercase tracking-[0.3em] font-semibold">
+            Stack
+          </span>
           <h2 className="mt-4 text-4xl md:text-5xl font-bold">
             Tecnologías y <span className="text-gradient">herramientas</span>
           </h2>
@@ -132,4 +134,3 @@ export function Stack() {
     </section>
   );
 }
-

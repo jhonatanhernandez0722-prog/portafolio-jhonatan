@@ -56,7 +56,9 @@ export function Projects() {
       <div className="container-narrow">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 max-w-4xl">
           <div>
-            <span className="text-primary text-sm uppercase tracking-[0.3em] font-semibold">Proyectos</span>
+            <span className="text-primary text-sm uppercase tracking-[0.3em] font-semibold">
+              Proyectos
+            </span>
             <h2 className="mt-4 text-4xl md:text-5xl font-bold">
               Trabajos <span className="text-gradient">destacados</span>
             </h2>
@@ -82,7 +84,10 @@ export function Projects() {
               <div className="p-6 flex flex-col flex-1">
                 <div className="flex flex-wrap gap-2 mb-3">
                   {p.tags.map((t) => (
-                    <span key={t} className="text-[11px] uppercase tracking-wider px-2 py-1 rounded-md bg-primary/10 text-primary border border-primary/20">
+                    <span
+                      key={t}
+                      className="text-[11px] uppercase tracking-wider px-2 py-1 rounded-md bg-primary/10 text-primary border border-primary/20"
+                    >
                       {t}
                     </span>
                   ))}
