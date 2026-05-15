@@ -1,4 +1,4 @@
-import portada from "@/assets/Images/Portada.jpeg";
+import portada from "@/assets/Images/actualizada.png";
 import banner from "@/assets/Images/banner.png";
 import { useState, useRef, useEffect } from "react";
 
