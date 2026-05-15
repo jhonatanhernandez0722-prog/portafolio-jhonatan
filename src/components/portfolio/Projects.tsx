@@ -54,7 +54,7 @@ export function Projects() {
   return (
     <section id="proyectos" className="section-padding">
       <div className="container-narrow">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 max-w-4xl">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 max-w-4xl text-center md:text-left">
           <div>
             <span className="text-primary text-sm uppercase tracking-[0.3em] font-semibold">
               Proyectos

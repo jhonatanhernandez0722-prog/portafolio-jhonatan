@@ -11,7 +11,7 @@ export function Education() {
   return (
     <section id="formacion" className="section-padding">
       <div className="container-narrow">
-        <div className="max-w-2xl">
+        <div className="max-w-2xl text-center md:text-left">
           <span className="text-primary text-sm uppercase tracking-[0.3em] font-semibold">
             Formación
           </span>
@@ -20,16 +20,16 @@ export function Education() {
           </h2>
         </div>
 
-        <ol className="mt-14 relative border-l border-border ml-3 space-y-8">
+        <ol className="mt-14 relative border-l border-border ml-0 md:ml-3 space-y-8 pl-8 md:pl-0">
           {items.map((it, i) => (
-            <li key={i} className="pl-8 relative">
+            <li key={i} className="md:pl-8 relative">
               <span className="absolute -left-[7px] top-2 h-3.5 w-3.5 rounded-full bg-primary shadow-[0_0_16px_var(--color-primary)]" />
-              <div className="glow-card p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+              <div className="glow-card p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-center md:text-left">
                 <div>
                   <h3 className="text-lg font-semibold">{it.title}</h3>
                   <p className="text-muted-foreground text-sm mt-1">{it.place}</p>
                 </div>
-                <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/30 self-start md:self-auto">
+                <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/30 self-center md:self-auto">
                   {it.year}
                 </span>
               </div>

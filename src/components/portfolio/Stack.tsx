@@ -59,7 +59,7 @@ export function Stack() {
   return (
     <section id="stack" className="section-padding">
       <div className="container-narrow">
-        <div className="max-w-2xl">
+        <div className="max-w-2xl text-center md:text-left">
           <span className="text-primary text-sm uppercase tracking-[0.3em] font-semibold">
             Stack
           </span>

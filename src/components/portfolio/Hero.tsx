@@ -123,10 +123,10 @@ export function Hero() {
         </div>
 
         <div className="container-narrow relative">
-          <div className="grid gap-12 xl:grid-cols-[1.05fr_0.95fr] items-center">
+          <div className="flex flex-col xl:grid xl:gap-12 xl:grid-cols-[1.05fr_0.95fr] xl:items-center gap-12 items-center">
             {/* ── Left column ── */}
-            <div className="space-y-8">
-              <div className="inline-flex items-center gap-3 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-sm font-medium text-primary shadow-[0_0_40px_-18px_oklch(0.77_0.007_250/0.4)]">
+            <div className="space-y-8 text-center md:text-left w-full xl:w-auto">
+              <div className="inline-flex items-center gap-3 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-sm font-medium text-primary shadow-[0_0_40px_-18px_oklch(0.77_0.007_250/0.4)] md:justify-start justify-center w-full md:w-auto">
                 <span className="h-2.5 w-2.5 rounded-full bg-primary animate-pulse" />
                 Disponible para nuevos proyectos con tecnología moderna
               </div>
@@ -151,7 +151,7 @@ export function Hero() {
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4 justify-center md:justify-start">
                 <a href="#proyectos" className="btn-primary">
                   Ver proyectos →
                 </a>
@@ -163,7 +163,7 @@ export function Hero() {
                 </a>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 max-w-lg">
+              <div className="grid grid-cols-3 gap-4 max-w-lg justify-items-center md:justify-items-start">
                 {[
                   { k: "+10", v: "Proyectos" },
                   { k: "5", v: "Stacks dominadas" },
@@ -183,7 +183,7 @@ export function Hero() {
             </div>
 
             {/* ── Right column — Interactive portada ── */}
-            <div className="relative">
+            <div className="relative mx-auto w-full max-w-sm md:max-w-none">
               <div
                 className="absolute -inset-10 rounded-full bg-primary/8 blur-3xl animate-float"
                 aria-hidden

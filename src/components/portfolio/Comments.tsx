@@ -72,7 +72,7 @@ export function Comments() {
     <section id="comentarios" className="section-padding">
       <div className="container-narrow">
         <div className="glow-card border border-border/50 bg-card/80 p-8 shadow-[0_0_40px_-18px_oklch(0.77_0.007_250/0.35)]">
-          <div className="mb-8">
+          <div className="mb-8 text-center md:text-left">
             <p className="text-sm uppercase tracking-[0.35em] text-muted-foreground">Comentarios</p>
             <h2 className="mt-3 text-3xl font-bold">Comparte tu opinión sobre mi trabajo</h2>
             <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
